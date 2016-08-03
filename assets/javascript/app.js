@@ -1,3 +1,6 @@
+
+var number = 61;
+var counter;
 var pos = 0, test, test_status, question, choice, choices, chA, chB, chC, chD, correct =0;
 var questions = [
 	["How many championship rings does Kobe Bryant have?","3","4","5","6","C"],
@@ -15,6 +18,35 @@ var questions = [
 
 ];
 
+function run(){
+    counter = setInterval(decrement, 1000);
+    if (number === 0){
+    // ...run the stop function.
+    	stop();
+    }
+}
+
+// The decremeent function.
+function decrement(){
+// Decrease number by one.
+    number--;
+    // Show the number in the #show-number tag.
+    $('#show-number').html('<h2>Time Left: ' + number + '</h2>');
+    // Once number hits zero...
+    if (number === 0){
+    // ...run the stop function.
+        stop();
+        $("#test_status").html("Test is over.");
+        $('#test').html("<h2>You got " + correct + " of " + questions.length + " questions correct.</h2>");
+        // Alert the user that time is up.
+        alert('Time Up!');
+    }
+}
+
+function stop(){
+	clearInterval(counter);
+}
+
 function quiz(x){
 	return document.getElementById(x);
 }
@@ -23,9 +55,11 @@ function renderQuestion() {
 	if(pos >= questions.length){
 		$('#test').html("<h2>You got " + correct + " of " + questions.length + " questions correct.</h2>");
 		$("#test_status").html("Test Completed");
+		stop();
 		pos = 0;
 		correct = 0;
 		return false;
+		//shows results of quiz, how many you got correct out of the total number of questions
 	}
 	$('#test_status').html("Question " + (pos+1) + " of " + questions.length);
 	question = questions[pos][0];
@@ -35,18 +69,27 @@ function renderQuestion() {
 	chD = questions[pos][4];
 	$('#test').html("<h3>" + question + "</h3>");
 	$('#test').append("<input type= 'radio' name= 'choices' value= 'A'>" + chA + "<br>" + "<input type= 'radio' name= 'choices' value= 'B'>" + chB + "<br>" + "<input type= 'radio' name= 'choices' value= 'C'>" + chC + "<br>" + "<input type= 'radio' name= 'choices' value= 'D'>" + chD + "<br><br>");
-	$('#test').append("<button onclick=' checkAnser()'>Submit</button>");
+	$('#test').append("<button onclick=' checkAnswer()'>Submit</button>");
+	//outputs the questions in an unordered list with radio buttons and all of the answer choices
 }
 function checkAnswer(){
-	choices = document.getElementByName("choices");
+	var choices = document.getElementsByName("choices");
 	for (var i = 0; i < choices.length; i++) {
 		if (choices[i].checked) {
 			choice = choices[i].value;
 		}
 	}
 	if (choice == questions[pos][5]) {
-		correct++;
+		correct++;//checks to see if the chosen answer is the correct answer
 	}
 	pos++;
 	renderQuestion();
+	//clearInterval(counter);
 }
+
+$(document).ready(function() {
+	quiz();
+	renderQuestion();
+	run();
+});
+
